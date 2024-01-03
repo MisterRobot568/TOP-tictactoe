@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&family=Roboto&display=swap');
+
+:root {
+    /* font-family: 'Pixelify Sans'; */
+    /* font-size: 5rem;
+    font-weight: 600; */
+    --prussian-blue: #0b3954ff;
+    --teal: #087e8bff;
+    --columbia-blue: #bfd7eaff;
+    --bittersweet: #ff5a5fff;
+    --fire-engine-red: #c81d25ff;
+    --square-width: 100px;
+    /* height: 100%;
+    width: 100%; */
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    /* if we start to have problems with height and width,
+    remove these from the universal selector and relocate them 
+    to :root, body, container */
+    height: 100%;
+    width: 100%
+}
+
+body {
+    /* width: 100%;
+    height: 100%; */
+    font-family: 'Pixelify Sans';
+    /* margin: 0;
+    padding: 0; */
+}
+
+.container {
+    /* width: 100%;
+    height: 100%; */
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 1fr 4fr 0.5fr;
+}
+
+.header {
+    background-color: var(--prussian-blue);
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+
+    color: white;
+    font-size: 3rem;
+    letter-spacing: 0.2rem;
+    /* line-height: 1rem; */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar {
+    background-color: var(--teal);
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-1-label,
+.player-2-label {
+    font-size: 2rem;
+    height: 75px;
+}
+
+.player-1-name,
+.player-2-name {
+    font-size: 2rem;
+    /* height: 20px; */
+}
+
+.sidebar>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 125px;
+}
+
+.main {
+    background-color: white;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.footer {
+    background-color: var(--prussian-blue);
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+}
+
+.game-container {
+
+    background-color: red;
+    width: auto;
+    /* calc(var(--square-width) * 3); */
+    height: auto;
+    /* calc(var(--square-width) * 3); */
+
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: repeat(3, var(--square-width));
+    grid-template-rows: repeat(3, var(--square-width));
+    gap: 10px;
+}
+
+.square {
+    /* content: center;
+    align-items: center; */
+    width: var(--square-width);
+    height: var(--square-width);
+    background-color: brown;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+}
