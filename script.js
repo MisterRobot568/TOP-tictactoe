@@ -8,8 +8,13 @@ const gameboard = (function () {
         ['', '', ''],
         ['', '', '']
     ];
-    const add_piece = (x, y, player) => board[x][y] = player
-    return { add_piece, board }
+    const add_piece = (x, y, player) => board[x][y] = player;
+    const reset_board = () => board = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ];
+    return { add_piece, board, reset_board }
 })();
 
 // 2) create the player object as a factory. This will keep track of each player
@@ -21,8 +26,9 @@ function createPlayer(name, symbol) {
 
     // const getName = () => playerName;
     // const getSymbol = () => playerSymbol;
+    const setName = (newName) => playerName = newName
 
-    return { playerName, playerSymbol };
+    return { playerName, playerSymbol, setName };
 }
 
 
@@ -77,8 +83,8 @@ const displayLogic = (function () {
 const gameController = (function () {
     let game_over = false;
     let turn_tracker = 0;
-    const playerOne = createPlayer('playerOne', 'X');
-    const playerTwo = createPlayer('playerTwo', 'O');
+    // const playerOne = createPlayer('p1', 'X');
+    // const playerTwo = createPlayer('p2', 'O');
 
     // this function checks the board to see if every space has been taken
     // (after we have checked to see if there is a winner). If every space has been
@@ -124,56 +130,71 @@ const gameController = (function () {
             win = true;
             winner = gameboard.board[2][2];
         }
-        return { win, winner }
+
+        // if (win === 'X')
+        let winnerName = winner === 'X' ? playerOne.playerName : playerTwo.playerName;
+        return { win, winner, winnerName } //##########################need to get winnername
     }
 
-    // while (!game_over) {
-    //     if (turn_tracker % 2 === 0) {
-    //         // WE"RE STUCK ON THIS SECTION////////////////////////////////////////////
-    //         //FIRST TRY
-    //         // let x_coord = prompt(`${playerOne.playerName} What is your x? `);
-    //         // let y_coord = prompt(`${playerOne.playerName} What is your y? `);
-    //         // gameboard.add_piece(Number(x_coord), Number(y_coord), playerOne.playerSymbol);
-    //         //SECOND TRY
-    //         // const piece_coords = displayLogic('X')
-    //         // console.log(piece_coords)
+    // handles the modal/dialog for the end game message to cut down on code repetition
+    function endGameDialog(messageInput) {
 
-    //         // const x_coord = piece_coords[0];
-    //         // const y_coord = piece_coords[1];
-    //         // gameboard.add_piece(Number(x_coord), Number(y_coord), 'X')
-    //         //THIRD TRY
-    //         // const x_move = displayLogic('X');
-    //         // document.querySelector('.game-container').addEventListener('click', x_move.handleSpaceClick)
-    //         displayLogic.handleSpaceClick('X');
+        const dialog = document.querySelector('.end-game');
+        const endMessage = document.querySelector('.end-message');
+        endMessage.textContent = messageInput;
+        dialog.showModal();
+
+        dialog.style.display = 'flex';
+        dialog.style.justifyContent = 'space-around';
+        dialog.style.transform = 'translate(-50%, -50%)';
+    }
+    // handles the start game dialog/modal.
+    // we get the playernames, add them as labels, and start the game
+
+    //WE ARE STUCK ON STARTGAMEDIALOG. THE DIALOG BOX POPS UP ON TOP OF THE 
+    //TICTACTOE BOARD AND CLOSES AS EXPECTED. HOWEVER ONCE CLOSED WE CANNOT 
+    // CLICK ON THE TICTACTOE BOARD ANYMORE. EVENTLISTENER ISSUE?
+    // MAYBE INTEGRATE INTEGRATE THIS INTO THE EVENT LISTENER FOR 
+    // HANDLEGAMECLICK?
+    function startGameDialog() {
+        const playerOneInput = document.querySelector('#playerOne');
+        const playerTwoInput = document.querySelector('#playerTwo');
+
+        const playerOneValue = playerOneInput.value;
+        const playerTwoValue = playerTwoInput.value;
+
+        //WE ADDED SETNAME TO THE PLAYER MODULE. TEST IF THESE LINES WORK
+        // playerOne.setName(playerOneValue)
+        // playerTwo.setName(playerTwoValue)
+
+        //1) create the players
+        const playerOne = createPlayer(playerOneValue, 'X');
+        const playerTwo = createPlayer(playerTwoValue, 'O');
+        //2) create a reference to the player labels in the html
+        const playerOneLabel = document.querySelector('.player-1-name');
+        const playerTwoLabel = document.querySelector('.player-2-name');
+        //3) change the textcontent of the labels
+        playerOneLabel.textContent = playerOne.playerName;
+        playerTwoLabel.textContent = playerTwo.playerName;
+
+        //4) get rid of the modal/dialog box
+        const dialog = document.querySelector('.start-game');
+
+        dialog.close();
+        // setTimeout(() => {
+        //     dialog.close();
+        // }, 100);
+        // dialog.style.display = 'none';
 
 
 
 
-    //     } else {
-    //         displayLogic.handleSpaceClick('O');
-    //         // let x_coord = prompt(`${playerTwo.playerName} What is your x? `);
-    //         // let y_coord = prompt(`${playerTwo.playerName} What is your y? `);
-    //         // gameboard.add_piece(Number(x_coord), Number(y_coord), playerTwo.playerSymbol);
-    //         // const piece_coords = displayLogic('O')
+        // document.querySelector('.game-container').removeEventListener('click', handleGameClick)
 
-    //         // const x_coord = piece_coords[0];
-    //         // const y_coord = piece_coords[1];
-    //         // gameboard.add_piece(Number(x_coord), Number(y_coord), 'O')
-
-    //     }
-    //     turn_tracker++;
-    //     // console.log(gameboard.board);
-    //     // console.log(winChecker().win)
-    //     if (winChecker().win) {
-    //         game_over = true;
-    //         console.log('winner detected')
-    //         console.log(`${winChecker().winner} wins!`)
-    //         break;
-    //     } else if (tieChecker()) {
-    //         game_over = true;
-    //         console.log('tie detected')
-    //     }
-    // }
+    }
+    const dialog = document.querySelector('.start-game');
+    dialog.showModal()
+    document.querySelector('.start-game-button').addEventListener('click', startGameDialog)
 
     // originally we had a while loop to control the flow of the game, 
     // but we swapped to event listeners because we couldn't get the while
@@ -190,11 +211,19 @@ const gameController = (function () {
 
                 if (winChecker().win) {
                     game_over = true;
-                    console.log('winner detected')
-                    console.log(`${winChecker().winner} wins!`)
+                    // console.log('winner detected')
+                    // console.log(`${winChecker().winner} wins!`)
+                    // from here edit the dialog box that appears when win/tie
+
+                    const endMessage = `${winChecker().winnerName} wins!`
+                    endGameDialog(endMessage);
+
+
                 } else if (tieChecker()) {
                     game_over = true;
-                    console.log('tie detected')
+                    // console.log('tie detected')
+                    const endMessage = "It's a tie!"
+                    endGameDialog(endMessage);
                 } else {
                     turn_tracker++;
                 }
@@ -205,21 +234,9 @@ const gameController = (function () {
 
 })();
 
+// NEXT TODO: 
+// 1) add button to start/restart the game!
+// 2) allow players to select a name
+// 3) add a display element that shows the results when the game ends
+
 // Create an object that will handle the DOM/Display logic
-
-
-// function handleSpaceClick(event) {
-//     const clickedSpace = event.target;
-//     if (clickedSpace.classList.contains('square')) {
-//         const index = clickedSpace.dataset.index;
-
-//         if (clickedSpace.textContent === '') {
-//             clickedSpace.textContent = symbol;
-//             return clickedSpace.dataset.index
-//         }
-//     }
-// }
-
-// }
-
-// displayLogic.renderBoard();

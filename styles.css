@@ -21,11 +21,12 @@
     /* if we start to have problems with height and width,
     remove these from the universal selector and relocate them 
     to :root, body, container */
-    height: 100%;
-    width: 100%
+    /* height: 100%;
+    width: 100% */
 }
 
 body {
+    height: 100vh;
     /* width: 100%;
     height: 100%; */
     font-family: 'Pixelify Sans';
@@ -33,9 +34,14 @@ body {
     padding: 0; */
 }
 
+/* for some reason the buttons didn't inherit our body's font, so we need this: */
+button {
+    font-family: inherit;
+}
+
 .container {
-    /* width: 100%;
-    height: 100%; */
+    width: 100%;
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr 4fr;
     grid-template-rows: 1fr 4fr 0.5fr;
@@ -87,6 +93,8 @@ body {
 }
 
 .main {
+    position: relative;
+    /* (so that we can position the modal/dialog relative to the main) */
     background-color: white;
     grid-column: 2 / 3;
     grid-row: 2 / 3;
@@ -118,6 +126,82 @@ body {
     grid-template-rows: repeat(3, var(--square-width));
     gap: 10px;
 }
+
+/* for the end game popup that happens when tie or win */
+.end-game {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    /* flex-direction: column; */
+    /* grid-column: 2 / 3;
+    grid-row: 2 / 3; */
+    position: absolute;
+    /* transform: translate(-50%, -50%); */
+    top: 50%;
+    left: 50%;
+
+    width: 350px;
+    height: 150px;
+
+    z-index: 0;
+
+
+}
+
+.start-game[open] {
+    display: flex;
+}
+
+.start-game {
+    /* display: flex; */
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    position: absolute;
+    top: 50%;
+
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+
+    width: 400px;
+    height: 375px;
+
+    font-size: 2rem;
+    padding: 10px;
+
+}
+
+fieldset {
+    border: none;
+}
+
+input {
+    height: 1.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.start-game>button {
+    width: auto;
+    height: auto;
+
+    font-size: 1.5rem;
+}
+
+/* WE'RE HAVING ISSUES CENTERING .ENDGAME WITH RESPECT TO .MAIN */
+/* MAYBE WE COULD MOVE .END-GAME INSIDE OF .GAME-CONTAINER AND SEE IF THAT WORKS? */
+
+.end-game>button,
+.end-game>div {
+    width: auto;
+    height: auto;
+
+    font-size: 1.5rem;
+}
+
 
 .square {
     /* content: center;
