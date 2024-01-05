@@ -9,11 +9,14 @@ const gameboard = (function () {
         ['', '', '']
     ];
     const add_piece = (x, y, player) => board[x][y] = player;
-    const reset_board = () => board = [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', '']
-    ];
+
+    const reset_board = () => {
+        for (let row = 0; row < board.length; row++) {
+            for (let col = 0; col < board[row].length; col++) {
+                board[row][col] = '';
+            }
+        }
+    }
     return { add_piece, board, reset_board }
 })();
 
@@ -24,11 +27,9 @@ function createPlayer(name, symbol) {
     let playerName = name;
     let playerSymbol = symbol;
 
-    // const getName = () => playerName;
-    // const getSymbol = () => playerSymbol;
     const setName = (newName) => playerName = newName
 
-    return { playerName, playerSymbol, setName };
+    return { playerName, playerSymbol };
 }
 
 
@@ -59,7 +60,6 @@ const displayLogic = (function () {
         if (playerSymbol === currentPlayerSymbol) {
             clickedSpace = playerSymbol.target
         }
-        // const clickedSpace = playerSymbol.target;
 
         if (clickedSpace && clickedSpace.classList && clickedSpace.classList.contains("square") && clickedSpace.textContent === '') {
             const index = clickedSpace.dataset.index;
@@ -69,6 +69,7 @@ const displayLogic = (function () {
 
             //update the game board and render the changes
             gameboard.add_piece(Number(row), Number(col), currentPlayerSymbol);
+            console.log(gameboard.board)
             renderBoard();
         }
     }
@@ -83,8 +84,10 @@ const displayLogic = (function () {
 const gameController = (function () {
     let game_over = false;
     let turn_tracker = 0;
-    // const playerOne = createPlayer('p1', 'X');
-    // const playerTwo = createPlayer('p2', 'O');
+
+    // PLAYERS MUST BE CREATED HERE OTHERWISE THE CODE BUGS
+    let playerOne = createPlayer('p1', 'X');
+    let playerTwo = createPlayer('p2', 'O');
 
     // this function checks the board to see if every space has been taken
     // (after we have checked to see if there is a winner). If every space has been
@@ -148,6 +151,26 @@ const gameController = (function () {
         dialog.style.justifyContent = 'space-around';
         dialog.style.transform = 'translate(-50%, -50%)';
     }
+
+    // listener for the endGameDialog Reset button
+    // what do we do when we click reset?
+    document.querySelector('.end-game-button').addEventListener('click', () => {
+        //reload the page once we're finished with the game
+        location.reload()
+        //     // 1) reset the gameboard 
+        //     gameboard.reset_board();
+        //     // 2) render new gameboard
+        //     displayLogic.renderBoard
+        //     console.log(gameboard.board)
+        //     // console.log(gameboard.reset_board())
+        //     const dialog = document.querySelector('.end-game')
+        //     dialog.close();
+        // }
+
+    }
+    )
+
+
     // handles the start game dialog/modal.
     // we get the playernames, add them as labels, and start the game
 
@@ -166,10 +189,12 @@ const gameController = (function () {
         //WE ADDED SETNAME TO THE PLAYER MODULE. TEST IF THESE LINES WORK
         // playerOne.setName(playerOneValue)
         // playerTwo.setName(playerTwoValue)
+        playerOne.playerName = playerOneValue;
+        playerTwo.playerName = playerTwoValue;
 
         //1) create the players
-        const playerOne = createPlayer(playerOneValue, 'X');
-        const playerTwo = createPlayer(playerTwoValue, 'O');
+        // const playerOne = createPlayer(playerOneValue, 'X');
+        // const playerTwo = createPlayer(playerTwoValue, 'O');
         //2) create a reference to the player labels in the html
         const playerOneLabel = document.querySelector('.player-1-name');
         const playerTwoLabel = document.querySelector('.player-2-name');
@@ -179,21 +204,15 @@ const gameController = (function () {
 
         //4) get rid of the modal/dialog box
         const dialog = document.querySelector('.start-game');
+        dialog.close()
 
-        dialog.close();
-        // setTimeout(() => {
-        //     dialog.close();
-        // }, 100);
-        // dialog.style.display = 'none';
-
-
-
-
-        // document.querySelector('.game-container').removeEventListener('click', handleGameClick)
+        //remove event listener after closing the dialog box
+        document.querySelector('.start-game-button').removeEventListener('click', startGameDialog);
 
     }
     const dialog = document.querySelector('.start-game');
-    dialog.showModal()
+    // dialog.showModal()
+    dialog.show()
     document.querySelector('.start-game-button').addEventListener('click', startGameDialog)
 
     // originally we had a while loop to control the flow of the game, 
@@ -211,10 +230,6 @@ const gameController = (function () {
 
                 if (winChecker().win) {
                     game_over = true;
-                    // console.log('winner detected')
-                    // console.log(`${winChecker().winner} wins!`)
-                    // from here edit the dialog box that appears when win/tie
-
                     const endMessage = `${winChecker().winnerName} wins!`
                     endGameDialog(endMessage);
 
