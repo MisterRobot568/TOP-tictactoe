@@ -60,7 +60,7 @@ const displayLogic = (function () {
         if (playerSymbol === currentPlayerSymbol) {
             clickedSpace = playerSymbol.target
         }
-
+        //if we click into a space on the tictactoe board
         if (clickedSpace && clickedSpace.classList && clickedSpace.classList.contains("square") && clickedSpace.textContent === '') {
             const index = clickedSpace.dataset.index;
             const [row, col] = index.split('');
@@ -73,7 +73,6 @@ const displayLogic = (function () {
             renderBoard();
         }
     }
-
 
 
     return { renderBoard, handleSpaceClick }
@@ -121,19 +120,22 @@ const gameController = (function () {
 
         } else if ( // check for winner who ALSO touches the top left piece
             ((gameboard.board[0][0] == gameboard.board[1][0] && gameboard.board[1][0] == gameboard.board[2][0] && (gameboard.board[2][0] == 'X' || gameboard.board[2][0] == 'O'))) ||
-            ((gameboard.board[0][0] == gameboard.board[1][1] && gameboard.board[1][1] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O')))
+            // ((gameboard.board[0][0] == gameboard.board[1][1] && gameboard.board[1][1] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O')))
+            ((gameboard.board[0][0] == gameboard.board[0][1] && gameboard.board[0][1] == gameboard.board[0][2] && (gameboard.board[0][2] == 'X' || gameboard.board[0][2] == 'O')))
+
         ) {
             win = true;
             winner = gameboard.board[0][0];
         } else if ( // check for winner who ALSO touches the bottom right piece
             ((gameboard.board[0][2] == gameboard.board[1][2] && gameboard.board[1][2] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O'))) ||
-            ((gameboard.board[0][0] == gameboard.board[1][1] && gameboard.board[1][1] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O')))
+            // ((gameboard.board[0][0] == gameboard.board[1][1] && gameboard.board[1][1] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O')))
+            ((gameboard.board[2][0] == gameboard.board[2][1] && gameboard.board[2][1] == gameboard.board[2][2] && (gameboard.board[2][2] == 'X' || gameboard.board[2][2] == 'O')))
 
         ) {
             win = true;
             winner = gameboard.board[2][2];
         }
-
+        console.log(gameboard.board)
         // if (win === 'X')
         let winnerName = winner === 'X' ? playerOne.playerName : playerTwo.playerName;
         return { win, winner, winnerName } //##########################need to get winnername
@@ -173,12 +175,6 @@ const gameController = (function () {
 
     // handles the start game dialog/modal.
     // we get the playernames, add them as labels, and start the game
-
-    //WE ARE STUCK ON STARTGAMEDIALOG. THE DIALOG BOX POPS UP ON TOP OF THE 
-    //TICTACTOE BOARD AND CLOSES AS EXPECTED. HOWEVER ONCE CLOSED WE CANNOT 
-    // CLICK ON THE TICTACTOE BOARD ANYMORE. EVENTLISTENER ISSUE?
-    // MAYBE INTEGRATE INTEGRATE THIS INTO THE EVENT LISTENER FOR 
-    // HANDLEGAMECLICK?
     function startGameDialog() {
         const playerOneInput = document.querySelector('#playerOne');
         const playerTwoInput = document.querySelector('#playerTwo');
@@ -186,15 +182,9 @@ const gameController = (function () {
         const playerOneValue = playerOneInput.value;
         const playerTwoValue = playerTwoInput.value;
 
-        //WE ADDED SETNAME TO THE PLAYER MODULE. TEST IF THESE LINES WORK
-        // playerOne.setName(playerOneValue)
-        // playerTwo.setName(playerTwoValue)
         playerOne.playerName = playerOneValue;
         playerTwo.playerName = playerTwoValue;
 
-        //1) create the players
-        // const playerOne = createPlayer(playerOneValue, 'X');
-        // const playerTwo = createPlayer(playerTwoValue, 'O');
         //2) create a reference to the player labels in the html
         const playerOneLabel = document.querySelector('.player-1-name');
         const playerTwoLabel = document.querySelector('.player-2-name');
@@ -211,7 +201,6 @@ const gameController = (function () {
 
     }
     const dialog = document.querySelector('.start-game');
-    // dialog.showModal()
     dialog.show()
     document.querySelector('.start-game-button').addEventListener('click', startGameDialog)
 
@@ -248,10 +237,3 @@ const gameController = (function () {
     document.querySelector('.game-container').addEventListener('click', handleGameClick);
 
 })();
-
-// NEXT TODO: 
-// 1) add button to start/restart the game!
-// 2) allow players to select a name
-// 3) add a display element that shows the results when the game ends
-
-// Create an object that will handle the DOM/Display logic
